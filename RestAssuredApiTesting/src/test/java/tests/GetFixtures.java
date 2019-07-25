@@ -3,15 +3,17 @@ package tests;
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.port;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class GetFixtures {
-	@BeforeEach
-	void setUp() throws Exception {
+	
+	@BeforeAll
+	static void setUp() throws Exception {
 	    baseURI = "http://localhost";
 	    port = 3000;
 	}

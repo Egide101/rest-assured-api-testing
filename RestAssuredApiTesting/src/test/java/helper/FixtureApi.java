@@ -1,6 +1,8 @@
 package helper;
 
+import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.port;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -10,8 +12,13 @@ import org.apache.http.HttpStatus;
 import io.restassured.http.ContentType;
 
 public class FixtureApi {
-
-	public static void CreateNewFixture(String fixtureJson) {
+	
+	static {
+		baseURI = "http://localhost";
+		port = 3000;
+	}
+	
+	public static void CreateNewFixture(String fixtureJson) {		
 		given()
 			.contentType(ContentType.JSON).
 		and()
@@ -60,7 +67,7 @@ public class FixtureApi {
 		return newFixture;
 	}
 
-	public static void removeFixtureWithFixtureId(String fixtureId) {
+	public static void deleteFixtureByFixtureId(String fixtureId) {
 		given()
 			.pathParam("fixtureId", fixtureId).
 		when()

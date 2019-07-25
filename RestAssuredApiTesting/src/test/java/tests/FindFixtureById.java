@@ -5,15 +5,15 @@ import static io.restassured.RestAssured.port;
 import static org.hamcrest.Matchers.equalTo;
 
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import io.restassured.http.ContentType;
 
 class FindFixtureById {
 
-	@BeforeEach
-	void setUp() throws Exception {
+	@BeforeAll
+	static void setUp() throws Exception {
 	    baseURI = "http://localhost";
 	    port = 3000;
 	}

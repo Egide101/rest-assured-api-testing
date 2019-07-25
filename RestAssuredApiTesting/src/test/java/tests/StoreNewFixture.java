@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
@@ -19,17 +19,17 @@ import helper.TestData;
 import models.Fixture;
 
 public class StoreNewFixture {
-	@BeforeEach
-	void setUp() throws Exception {
+	@BeforeAll
+	static void setUp() throws Exception {
 		baseURI = "http://localhost";
 		port = 3000;
 	}
 
-	@AfterEach
-	void tearDown() throws Exception {
-		FixtureApi.removeFixtureWithFixtureId("5");
-		FixtureApi.removeFixtureWithFixtureId("6");
-		FixtureApi.removeFixtureWithFixtureId("7");
+	@AfterAll
+	static void tearDown() throws Exception {
+		  FixtureApi.deleteFixtureByFixtureId("5");
+		  FixtureApi.deleteFixtureByFixtureId("6");
+		  FixtureApi.deleteFixtureByFixtureId("7");
 	}
 
 	/*
@@ -44,7 +44,7 @@ public class StoreNewFixture {
 		String fixtureJson = new Gson().toJson(fixture);
 		
 		//make sure the fixture does not already exist
-		FixtureApi.removeFixtureWithFixtureId(newFixtureId);
+		FixtureApi.deleteFixtureByFixtureId(newFixtureId);
 		
 		//Add new fixture
 		FixtureApi.CreateNewFixture(fixtureJson);
@@ -75,7 +75,8 @@ public class StoreNewFixture {
 		fixture.setFixtureId(newFixtureId);
 		String fixtureJson = new Gson().toJson(fixture);
 		
-		FixtureApi.removeFixtureWithFixtureId(newFixtureId);
+		//make sure the fixture does not already exist
+		FixtureApi.deleteFixtureByFixtureId(newFixtureId);
 		
 		//Add new fixture
 		FixtureApi.CreateNewFixture(fixtureJson);
@@ -97,7 +98,7 @@ public class StoreNewFixture {
 		String fixtureJson = new Gson().toJson(fixture);
 		
 		//make sure that the fixture is not in the database already
-		FixtureApi.removeFixtureWithFixtureId(newFixtureId);
+		FixtureApi.deleteFixtureByFixtureId(newFixtureId);
 		
 		//create new fixture
 		FixtureApi.CreateNewFixture(fixtureJson);
@@ -106,7 +107,7 @@ public class StoreNewFixture {
 		assertNotNull(FixtureApi.getFixture(180,newFixtureId),"Fixture has not been created");
 		
 		//delete the fixture created
-		FixtureApi.removeFixtureWithFixtureId(newFixtureId);
+		FixtureApi.deleteFixtureByFixtureId(newFixtureId);
 		
 		//assert that the fixture has been deleted
 		assertNull(FixtureApi.getFixture(180,newFixtureId),"Fixture has not been deleted");
