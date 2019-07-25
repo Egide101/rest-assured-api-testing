@@ -20,8 +20,15 @@ public class GetFixtures {
 	void tearDown() throws Exception {
 	}
 	
+	
+	/*
+	 * 1. Retrieve all fixtures.
+	 * Assert that there are 3 fixtures within the returned object. 
+	 * Assert that each of the 3 fixtures has a fixtureId value.
+	 */
+	
 	@Test
-	void getAllFixturesAndAssetThatThereAreThreeFixturesEachWithFictureId() {
+	void get_all_fixtures_and_asset_that_there_are_three_fixtures_each_with_fixtureId() {
 		given()
 			.get("fixtures").
 		then().assertThat()

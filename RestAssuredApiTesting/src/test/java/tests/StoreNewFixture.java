@@ -7,9 +7,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import java.time.Duration;
-import java.time.Instant;
-
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +14,8 @@ import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 
-import io.restassured.http.ContentType;
+import helper.FixtureApi;
+import helper.TestData;
 import models.Fixture;
 
 public class StoreNewFixture {
@@ -29,30 +27,34 @@ public class StoreNewFixture {
 
 	@AfterEach
 	void tearDown() throws Exception {
+		FixtureApi.removeFixtureWithFixtureId("5");
+		FixtureApi.removeFixtureWithFixtureId("6");
+		FixtureApi.removeFixtureWithFixtureId("7");
 	}
 
+	/*
+	 * 2. Using the model guide in apiDocs.html, store a new fixture in the
+	 * database.
+	 */
 	@Test
-	void storeANewFixtureInDb() {
-
+	void store_new_fixture_and_assert_first_object_of_array_teamId_HOME() {
+		String newFixtureId = "5";
 		Fixture fixture = TestData.getFixtureTestData();
-		fixture.setFixtureId("5");
+		fixture.setFixtureId(newFixtureId);
 		String fixtureJson = new Gson().toJson(fixture);
 		
-		removeFixtureWithFixtureId("5");
+		//make sure the fixture does not already exist
+		FixtureApi.removeFixtureWithFixtureId(newFixtureId);
 		
 		//Add new fixture
-		given()
-			.contentType(ContentType.JSON).
-		and()
-			.request().body(fixtureJson).
-		when()
-			.post("/fixture").
-		then().assertThat()
-			.statusCode(HttpStatus.SC_OK);
+		FixtureApi.CreateNewFixture(fixtureJson);
 		
-		//get the new fixture 
+		//assert new fixture has been added
+		assertNotNull(FixtureApi.getFixture(180,newFixtureId),"Fixture has not been created");
+		
+		//Assert, within the teams array, that the first object has a teamId of 'HOME'
 		given()
-			.pathParam("fixtureId", "5").
+			.pathParam("fixtureId", newFixtureId).
 		when()
 			.get("fixture/{fixtureId}").
 		then()
@@ -60,105 +62,53 @@ public class StoreNewFixture {
 		and()
 			.body("footballFullState.teams.teamId[0]",is("HOME"));
 	}
-	
+
+	/*
+	 * 3.To simulate latency within systems, there is an intentional, random delay
+	 * to store a new fixture on the server. Bearing the delay in mind, create a new
+	 * fixture and then retrieve it as soon as it's available
+	 */
 	@Test
-	void storeANewFixture_ThenReadAsap() {
+	void store_new_fixture_then_retrieve_it_asap() {
 		String newFixtureId = "6";
 		Fixture fixture = TestData.getFixtureTestData();
 		fixture.setFixtureId(newFixtureId);
 		String fixtureJson = new Gson().toJson(fixture);
 		
-		removeFixtureWithFixtureId(newFixtureId);
+		FixtureApi.removeFixtureWithFixtureId(newFixtureId);
 		
 		//Add new fixture
-		given()
-			.contentType(ContentType.JSON).
-		and()
-			.request().body(fixtureJson).
-		when()
-			.post("/fixture").
-		then().assertThat()
-			.statusCode(HttpStatus.SC_OK);
+		FixtureApi.CreateNewFixture(fixtureJson);
 		
-		//retrieve the new fixture within 3 minutes or timeout
-		String newFixture = getFixture(180,newFixtureId);
+		//retrieve the new fixture asap and within 3 minutes
+		String newFixture = FixtureApi.getFixture(180,newFixtureId);
 		
-		System.out.println(newFixture);
-		
+		assertNotNull(newFixture,"new fixture has not been created");		
 	}
 	
+	/*
+	 * 4.Create and delete a new fixture. Assert that the fixture no longer exists.
+	 */
 	@Test
-	void createFixture_ThenDeleteFixture() {
-		String newFixtureId = "6";
+	void create_fixture_then_delete_fixture() {
+		String newFixtureId = "7";
 		Fixture fixture = TestData.getFixtureTestData();
 		fixture.setFixtureId(newFixtureId);
 		String fixtureJson = new Gson().toJson(fixture);
 		
-		removeFixtureWithFixtureId(newFixtureId);
+		//make sure that the fixture is not in the database already
+		FixtureApi.removeFixtureWithFixtureId(newFixtureId);
 		
-		CreateNewFixture(fixtureJson);
+		//create new fixture
+		FixtureApi.CreateNewFixture(fixtureJson);
 		
-		assertNotNull(getFixture(180,newFixtureId),"Fixture has not been created");
+		//assert new fixture has been added
+		assertNotNull(FixtureApi.getFixture(180,newFixtureId),"Fixture has not been created");
 		
-		removeFixtureWithFixtureId(newFixtureId);
+		//delete the fixture created
+		FixtureApi.removeFixtureWithFixtureId(newFixtureId);
 		
-		assertNull(getFixture(180,newFixtureId),"Fixture has not been deleted");
-	}
-	
-
-	private void CreateNewFixture(String fixtureJson) {
-		given()
-			.contentType(ContentType.JSON).
-		and()
-			.request().body(fixtureJson).
-		when()
-			.post("/fixture").
-		then().assertThat()
-			.statusCode(HttpStatus.SC_OK);
-	}
-	
-	private String getFixture(int timeoutInseconds,String fixtureId) {
-		int statusCode = 0;
-		String newFixture = null;
-		
-		Instant start = Instant.now();
-
-		long timeElapsed;
-		
-		do {
-			try {
-				
-				Thread.sleep(1000);
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			
-			statusCode = given()
-					.pathParam("fixtureId", fixtureId).
-				when()
-					.get("fixture/{fixtureId}").
-				then().extract().statusCode();
-						
-			timeElapsed = Duration.between(start, Instant.now()).getSeconds();
-		} while (statusCode != HttpStatus.SC_OK && timeElapsed < timeoutInseconds);
-		
-		if(statusCode == HttpStatus.SC_OK) {
-		newFixture = 
-			given()
-				.pathParam("fixtureId", fixtureId).
-			when()
-				.get("fixture/{fixtureId}").
-			then().extract().body().asString();
-		}
-		
-		return newFixture;
-	}
-
-	private void removeFixtureWithFixtureId(String fixtureId) {
-		given()
-			.pathParam("fixtureId", fixtureId).
-		when()
-			.delete("fixture/{fixtureId}");
+		//assert that the fixture has been deleted
+		assertNull(FixtureApi.getFixture(180,newFixtureId),"Fixture has not been deleted");
 	}
 }

@@ -5,7 +5,6 @@ import static io.restassured.RestAssured.port;
 import static org.hamcrest.Matchers.equalTo;
 
 import org.apache.http.HttpStatus;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,12 +18,8 @@ class FindFixtureById {
 	    port = 3000;
 	}
 
-	@AfterEach
-	void tearDown() throws Exception {
-	}
-
 	@Test
-	void givenValidFixtureIdThenReturnsOk() {
+	void get_fixture_by_fixtureId() {
 		given()
 			.contentType(ContentType.JSON).
 		with()
@@ -36,7 +31,7 @@ class FindFixtureById {
 	}
 	
 	@Test
-	void eachOfThreeFixturesHasAFixtureId() {
+	void get_fixture_by_fixtureId_assert_first_fixtureId_is_1() {
 		given()
 			.contentType(ContentType.JSON).
 		with()

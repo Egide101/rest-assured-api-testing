@@ -6,7 +6,7 @@
 	<artifactId>RestAssuredApiTesting</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>RestAssuredApiTesting</name>
-	<description>Technical test assessment</description>
+	<description>api testing using rest assured</description>
 
 	<dependencies>
 
