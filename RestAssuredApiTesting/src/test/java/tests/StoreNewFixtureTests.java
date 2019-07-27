@@ -15,10 +15,10 @@ import org.junit.jupiter.api.Test;
 import com.google.gson.Gson;
 
 import helper.FixtureApi;
-import helper.TestData;
+import helper.FixtureData;
 import models.Fixture;
 
-public class StoreNewFixture {
+public class StoreNewFixtureTests {
 	@BeforeAll
 	static void setUp() throws Exception {
 		baseURI = "http://localhost";
@@ -39,7 +39,7 @@ public class StoreNewFixture {
 	@Test
 	void store_new_fixture_and_assert_first_object_of_array_teamId_HOME() {
 		String newFixtureId = "5";
-		Fixture fixture = TestData.getFixtureTestData();
+		Fixture fixture = FixtureData.getFixtureTestData();
 		fixture.setFixtureId(newFixtureId);
 		String fixtureJson = new Gson().toJson(fixture);
 		
@@ -71,7 +71,7 @@ public class StoreNewFixture {
 	@Test
 	void store_new_fixture_then_retrieve_it_asap() {
 		String newFixtureId = "6";
-		Fixture fixture = TestData.getFixtureTestData();
+		Fixture fixture = FixtureData.getFixtureTestData();
 		fixture.setFixtureId(newFixtureId);
 		String fixtureJson = new Gson().toJson(fixture);
 		
@@ -93,7 +93,7 @@ public class StoreNewFixture {
 	@Test
 	void create_fixture_then_delete_fixture() {
 		String newFixtureId = "7";
-		Fixture fixture = TestData.getFixtureTestData();
+		Fixture fixture = FixtureData.getFixtureTestData();
 		fixture.setFixtureId(newFixtureId);
 		String fixtureJson = new Gson().toJson(fixture);
 		

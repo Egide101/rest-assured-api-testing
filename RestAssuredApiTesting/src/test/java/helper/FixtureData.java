@@ -8,13 +8,13 @@ import com.google.gson.Gson;
 
 import models.Fixture;
 
-public class TestData {
+public class FixtureData {
 
 	public static Fixture getFixtureTestData() {
 		Fixture fixture = null;
 
 		String fileName = "testData/FixtureData.json";
-		ClassLoader classLoader = new TestData().getClass().getClassLoader();
+		ClassLoader classLoader = new FixtureData().getClass().getClassLoader();
 
 		File file = new File(classLoader.getResource(fileName).getFile());
 
