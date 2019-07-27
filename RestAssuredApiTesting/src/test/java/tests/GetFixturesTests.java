@@ -10,7 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class GetFixturesTest {
+public class GetFixturesTests {
 	
 	@BeforeAll
 	static void setUp() throws Exception {

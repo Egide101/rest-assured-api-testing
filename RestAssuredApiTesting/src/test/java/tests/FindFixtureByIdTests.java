@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import io.restassured.http.ContentType;
 
-class FindFixtureByIdTest {
+class FindFixtureByIdTests {
 
 	@BeforeAll
 	static void setUp() throws Exception {
